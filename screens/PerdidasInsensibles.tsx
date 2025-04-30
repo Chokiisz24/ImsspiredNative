@@ -9,10 +9,9 @@ import {
   Platform,
   TouchableWithoutFeedback,
   Keyboard,
-  TouchableOpacity // 👈 aquí lo agregas
+  TouchableOpacity,
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-
 
 const PerdidasInsensibles = () => {
   const [peso, setPeso] = useState('');
@@ -23,8 +22,10 @@ const PerdidasInsensibles = () => {
   const calcular = () => {
     const pesoNum = parseFloat(peso);
     const horasNum = parseFloat(horas);
-    const ml = (pesoNum * valorTemperatura) * horasNum;
-    setResultado(ml);
+    if (!isNaN(pesoNum) && !isNaN(horasNum)) {
+      const ml = (pesoNum * valorTemperatura) * horasNum;
+      setResultado(ml);
+    }
     Keyboard.dismiss();
   };
 
@@ -35,59 +36,51 @@ const PerdidasInsensibles = () => {
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-          <Text style={styles.title}>Pérdidas Insensibles</Text>
+          <Text style={styles.titulo}>Cálculo de Pérdidas Insensibles</Text>
 
-          <View style={styles.field}>
-            <Text style={styles.label}>Peso (kg)</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Ej. 70"
-              placeholderTextColor="#ccc"
-              value={peso}
-              onChangeText={setPeso}
-              keyboardType="numeric"
-            />
+          <Text style={styles.formula}>📘 Fórmula: Peso × Temperatura × Horas</Text>
+
+          <TextInput
+            style={styles.input}
+            placeholder="Peso en kg (ej. 70)"
+            placeholderTextColor="#888"
+            keyboardType="numeric"
+            value={peso}
+            onChangeText={setPeso}
+          />
+
+          <TextInput
+            style={styles.input}
+            placeholder="Horas trabajadas (ej. 8)"
+            placeholderTextColor="#888"
+            keyboardType="numeric"
+            value={horas}
+            onChangeText={setHoras}
+          />
+
+          <View style={styles.pickerContainer}>
+            <Text style={styles.pickerLabel}>Temperatura corporal</Text>
+            <Picker
+              selectedValue={valorTemperatura}
+              onValueChange={(itemValue) => setValorTemperatura(itemValue)}
+              dropdownIconColor="#195365"
+              style={styles.picker}
+            >
+              <Picker.Item label="< 37°C (0.5)" value={0.5} />
+              <Picker.Item label="37.1°C - 38°C (0.6)" value={0.6} />
+              <Picker.Item label="38.1°C - 39°C (0.7)" value={0.7} />
+              <Picker.Item label="> 39°C (1.0)" value={1.0} />
+            </Picker>
           </View>
 
-          <View style={styles.field}>
-            <Text style={styles.label}>Horas trabajadas</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Ej. 8"
-              placeholderTextColor="#ccc"
-              value={horas}
-              onChangeText={setHoras}
-              keyboardType="numeric"
-            />
-          </View>
-
-          <View style={styles.field}>
-            <Text style={styles.label}>Temperatura corporal</Text>
-            <View style={styles.pickerContainer}>
-              <Picker
-                selectedValue={valorTemperatura}
-                onValueChange={(itemValue) => setValorTemperatura(itemValue)}
-                dropdownIconColor="#fff"
-                style={styles.picker}
-              >
-                <Picker.Item label="< 37°C (0.5)" value={0.5} />
-                <Picker.Item label="37.1°C - 38°C (0.6)" value={0.6} />
-                <Picker.Item label="38.1°C - 39°C (0.7)" value={0.7} />
-                <Picker.Item label="> 39°C (1.0)" value={1.0} />
-              </Picker>
-            </View>
-          </View>
-
-<TouchableOpacity style={styles.button} onPress={calcular} activeOpacity={0.8}>
-  <Text style={styles.buttonText}>Calcular</Text>
-</TouchableOpacity>
-
-
+          <TouchableOpacity style={styles.boton} onPress={calcular}>
+            <Text style={styles.botonTexto}>Calcular</Text>
+          </TouchableOpacity>
 
           {resultado !== null && (
-            <Text style={styles.result}>
-              Resultado: {resultado.toFixed(2)} ml
-            </Text>
+            <View style={styles.resultadoContainer}>
+              <Text style={styles.resultadoTexto}>Resultado: {resultado.toFixed(2)} ml</Text>
+            </View>
           )}
         </ScrollView>
       </TouchableWithoutFeedback>
@@ -100,74 +93,77 @@ export default PerdidasInsensibles;
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
-    backgroundColor: '#195365',
+    backgroundColor: 'rgb(255, 255, 255)',
   },
   container: {
     flexGrow: 1,
-    padding: 24,
+    padding: 20,
   },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 30,
-    textAlign: 'center',
-  },
-  field: {
-    marginBottom: 20,
-  },
-  label: {
-    color: '#fff',
-    fontSize: 16,
-    marginBottom: 6,
-    fontWeight: '600',
-  },
-  input: {
-    backgroundColor: '#1e5e73',
-    color: '#fff',
-    paddingVertical: 10,
-    paddingHorizontal: 14,
-    borderRadius: 10,
-    fontSize: 16,
-  },
-  pickerContainer: {
-    backgroundColor: '#195365',
-    borderRadius: 10,
-    marginBottom: 15,
-  },
-  picker: {
-    color: '#fff',
-    width: '100%',
-  },
-  buttonContainer: {
-    marginVertical: 30,
-    borderRadius: 10,
-    overflow: 'hidden',
-  },
-  result: {
-    color: '#27D98B',
+  titulo: {
     fontSize: 22,
     fontWeight: 'bold',
+    color: '#195365',
+    marginBottom: 10,
     textAlign: 'center',
-    marginTop: 10,
   },
-  button: {
-    backgroundColor: 'rgb(5, 77, 159)',
-    paddingVertical: 14,
-    borderRadius: 12,
+  formula: {
+    fontSize: 16,
+    fontStyle: 'italic',
+    color: '#195365',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  input: {
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 12,
+    fontSize: 16,
+    marginBottom: 15,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    color: '#000',
+  },
+  pickerContainer: {
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    padding: 8,
+  },
+  pickerLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#195365',
+    marginBottom: 6,
+  },
+  picker: {
+    width: '100%',
+    color: '#000',
+  },
+  boton: {
+    backgroundColor: '#195365',
+    padding: 15,
+    borderRadius: 10,
     alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 30,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
-    elevation: 4,
+    marginBottom: 20,
   },
-  buttonText: {
+  botonTexto: {
     color: '#fff',
-    fontSize: 18,
     fontWeight: 'bold',
+    fontSize: 16,
   },
-  
+  resultadoContainer: {
+    backgroundColor: '#f4f4f4',
+    padding: 20,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#195365',
+  },
+  resultadoTexto: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#195365',
+    textAlign: 'center',
+  },
 });

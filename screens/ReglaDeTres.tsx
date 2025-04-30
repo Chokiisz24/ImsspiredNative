@@ -1,6 +1,17 @@
-// Opción 1: Mostrar en una alerta
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
+  Alert,
+  ScrollView,
+} from 'react-native';
 
 const ReglaDeTres = () => {
   const [dosisTotal, setDosisTotal] = useState('');
@@ -14,6 +25,7 @@ const ReglaDeTres = () => {
     const dosis = parseFloat(dosisIndicada);
 
     if (isNaN(total) || isNaN(ml) || isNaN(dosis) || total === 0) {
+      Alert.alert('Error', 'Por favor, completa todos los campos correctamente.');
       setResultado(null);
       return;
     }
@@ -24,16 +36,15 @@ const ReglaDeTres = () => {
   };
 
   const mostrarUnidadesInsulina = (ml: number) => {
-    if (ml <= 1) {
-      const unidades = [1, 10, 20, 50, 100];
-      const mensaje = unidades.map((ui, index) => `${ui} UI = ${(ui * 0.01).toFixed(2)} ml`).join('\n');
-      Alert.alert(
-        'Unidades de Insulina',
-        mensaje,
-        [{ text: 'OK', onPress: () => {} }],
-        { cancelable: false }
-      );
-    }
+    const unidades = [1, 10, 20, 50, 100];
+    const mensaje = unidades.map((ui) => `${ui} UI = ${(ui * 0.01).toFixed(2)} ml`).join('\n');
+
+    Alert.alert(
+      'Equivalencias de Unidades de Insulina',
+      mensaje,
+      [{ text: 'Cerrar', style: 'default' }],
+      { cancelable: true }
+    );
   };
 
   return (
@@ -42,56 +53,45 @@ const ReglaDeTres = () => {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={styles.container}>
-          <Text style={styles.title}>Cálculo de Dosis (Regla de 3)</Text>
+        <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+          <Text style={styles.titulo}>Cálculo Regla de Tres</Text>
+          <Text style={styles.formula}>📘 Fórmula: (Dosis indicada × ml) / Dosis total</Text>
 
-          <View style={styles.field}>
-            <Text style={styles.label}>Dosis total del frasco (mg)</Text>
-            <TextInput
-              style={styles.input}
-              keyboardType="numeric"
-              value={dosisTotal}
-              onChangeText={setDosisTotal}
-              placeholder="Ej. 100"
-              placeholderTextColor="#ccc"
-            />
-          </View>
+          <TextInput
+            style={styles.input}
+            keyboardType="numeric"
+            value={dosisTotal}
+            onChangeText={setDosisTotal}
+            placeholder="Dosis total del frasco (mg)"
+            placeholderTextColor="#888"
+          />
 
-          <View style={styles.field}>
-            <Text style={styles.label}>Mililitros totales del frasco (ml)</Text>
-            <TextInput
-              style={styles.input}
-              keyboardType="numeric"
-              value={mlTotal}
-              onChangeText={setMlTotal}
-              placeholder="Ej. 2"
-              placeholderTextColor="#ccc"
-            />
-          </View>
+          <TextInput
+            style={styles.input}
+            keyboardType="numeric"
+            value={mlTotal}
+            onChangeText={setMlTotal}
+            placeholder="Mililitros totales del frasco (ml)"
+            placeholderTextColor="#888"
+          />
 
-          <View style={styles.field}>
-            <Text style={styles.label}>Dosis indicada por el médico (mg)</Text>
-            <TextInput
-              style={styles.input}
-              keyboardType="numeric"
-              value={dosisIndicada}
-              onChangeText={setDosisIndicada}
-              placeholder="Ej. 20"
-              placeholderTextColor="#ccc"
-            />
-          </View>
+          <TextInput
+            style={styles.input}
+            keyboardType="numeric"
+            value={dosisIndicada}
+            onChangeText={setDosisIndicada}
+            placeholder="Dosis indicada por el médico (mg)"
+            placeholderTextColor="#888"
+          />
 
-          <TouchableOpacity style={styles.button} onPress={calcular}>
-            <Text style={styles.buttonText}>Calcular</Text>
+          <TouchableOpacity style={styles.boton} onPress={calcular}>
+            <Text style={styles.botonTexto}>Calcular</Text>
           </TouchableOpacity>
 
           {resultado !== null && (
-            <View>
-              <Text style={styles.resultado}>
-                Debes administrar: {resultado.toFixed(2)} ml
-              </Text>
+            <View style={styles.resultadoContainer}>
+              <Text style={styles.resultadoTexto}>Resultado: {resultado.toFixed(2)} ml</Text>
 
-              {/* Mostrar unidades de insulina si es menor o igual a 1 ml */}
               {resultado <= 1 && (
                 <TouchableOpacity onPress={() => mostrarUnidadesInsulina(resultado)}>
                   <Text style={styles.verUnidadesButton}>Ver Unidades de Insulina</Text>
@@ -99,76 +99,77 @@ const ReglaDeTres = () => {
               )}
             </View>
           )}
-        </View>
+        </ScrollView>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   );
 };
 
-// ... (estilos)
+export default ReglaDeTres;
+
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
-    backgroundColor: '#195365',
+    backgroundColor: '#fff',
   },
   container: {
-    flex: 1,
-    paddingHorizontal: 20,
-    justifyContent: 'flex-start',
-    marginTop: 30,
+    flexGrow: 1,
+    padding: 20,
   },
-  title: {
-    fontSize: 26,
-    color: '#fff',
+  titulo: {
+    fontSize: 22,
     fontWeight: 'bold',
-    marginBottom: 30,
+    color: '#195365',
+    marginBottom: 10,
     textAlign: 'center',
   },
-  field: {
-    width: '100%',
-    marginBottom: 20,
-  },
-  label: {
-    color: '#fff',
-    marginBottom: 5,
+  formula: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontStyle: 'italic',
+    color: '#195365',
+    marginBottom: 20,
+    textAlign: 'center',
   },
   input: {
-    backgroundColor: '#1e5e73',
-    color: '#fff',
-    padding: 12,
+    backgroundColor: '#fff',
     borderRadius: 10,
+    padding: 12,
     fontSize: 16,
-    marginBottom: 10,
+    marginBottom: 15,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    color: '#000',
   },
-  button: {
-    backgroundColor: 'rgb(5, 77, 159)',
-    paddingVertical: 15,
-    paddingHorizontal: 40,
+  boton: {
+    backgroundColor: '#195365',
+    padding: 15,
     borderRadius: 10,
     alignItems: 'center',
-    marginTop: 20,
+    marginBottom: 20,
   },
-  buttonText: {
-    fontSize: 18,
+  botonTexto: {
     color: '#fff',
-    fontWeight: '600',
-  },
-  resultado: {
-    marginTop: 30,
-    fontSize: 20,
-    textAlign: 'center',
-    color: '#27D98B',
     fontWeight: 'bold',
+    fontSize: 16,
+  },
+  resultadoContainer: {
+    backgroundColor: '#f4f4f4',
+    padding: 20,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#195365',
+  },
+  resultadoTexto: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#195365',
+    textAlign: 'center',
   },
   verUnidadesButton: {
     marginTop: 10,
-    color: '#3498db', // Color azul para indicar que es un enlace/botón
     textAlign: 'center',
-    textDecorationLine: 'underline', // Subrayado para mayor claridad
+    color: '#195365',
+    textDecorationLine: 'underline',
     fontSize: 16,
   },
 });
-
-export default ReglaDeTres;

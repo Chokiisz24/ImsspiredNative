@@ -215,61 +215,55 @@ Cómo se valora:
     `
   }
 ];
-
 const PatronesFuncionales: React.FC<PatronesFuncionalesProps> = ({ navigation }) => {
-    const mostrarDescripcion = (descripcion: string) => {
-      navigation.navigate('DetallePatron', { descripcion });
-    };
-  
-    return (
-        
-      <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.title}>11 Patrones Funcionales</Text>
-        {patrones.map((patron, index) => (
-          <TouchableOpacity
-            key={index}
-            style={styles.card}
-            onPress={() => 
-                navigation.navigate('DetallePatron', { 
-                  descripcion: patron.descripcion,
-                  nombre: patron.nombre, // Asegúrate de que el objeto `patron` tiene la propiedad `nombre`
-                })
-              }
-                        >
-            <Text style={styles.cardText}>{`${index + 1}. ${patron.nombre}`}</Text>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
-    );
-  };
-  
+  return (
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.title}>11 Patrones Funcionales</Text>
+      {patrones.map((patron, index) => (
+        <TouchableOpacity
+          key={index}
+          style={styles.card}
+          onPress={() =>
+            navigation.navigate('DetallePatron', {
+              descripcion: patron.descripcion,
+              nombre: patron.nombre,
+            })
+          }
+        >
+          <Text style={styles.cardText}>{`${index + 1}. ${patron.nombre}`}</Text>
+        </TouchableOpacity>
+      ))}
+    </ScrollView>
+  );
+};
 
 export default PatronesFuncionales;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#195365',
-    padding: 20,
     flexGrow: 1,
+    backgroundColor: '#fff',
+    padding: 20,
   },
   title: {
-    fontSize: 24,
-    color: '#fff',
+    fontSize: 22,
     fontWeight: 'bold',
+    color: '#195365',
     marginBottom: 20,
     textAlign: 'center',
   },
   card: {
-    backgroundColor: 'rgb(5, 77, 159)',
-    padding: 18,
+    backgroundColor: '#fff',
     borderRadius: 10,
-    marginBottom: 12,
-    alignItems: 'center',
+    padding: 15,
+    borderWidth: 1,
+    borderColor: '#195365',
+    marginBottom: 15,
   },
   cardText: {
-    color: '#fff',
     fontSize: 16,
-    fontWeight: '600',
+    color: '#195365',
     textAlign: 'center',
+    fontWeight: '600',
   },
 });

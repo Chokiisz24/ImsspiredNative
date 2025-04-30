@@ -5,27 +5,26 @@ import { RouteProp } from '@react-navigation/native';
 type ParamList = {
   DetallePatron: {
     descripcion: string;
-    nombre: string; // Añadimos el nombre del patrón
+    nombre: string;
   };
 };
 
 type DetallePatronProps = {
   route: RouteProp<ParamList, 'DetallePatron'>;
-  navigation: any; // Aquí agregamos `navigation` para actualizar el título
+  navigation: any;
 };
 
 const DetallePatron: React.FC<DetallePatronProps> = ({ route, navigation }) => {
   const { descripcion, nombre } = route.params;
 
-  // Usamos useEffect para actualizar el título de la barra de navegación
   useEffect(() => {
     navigation.setOptions({
-      title: nombre, // Cambia el título por el nombre del patrón
+      title: nombre,
     });
   }, [nombre, navigation]);
 
   const renderTextoConFormato = (texto: string) => {
-    const partes = texto.split('\n').map((linea, index) => {
+    return texto.split('\n').map((linea, index) => {
       if (linea.includes('Qué valora:') || linea.includes('Cómo se valora:')) {
         return (
           <Text key={index} style={styles.boldText}>
@@ -39,13 +38,14 @@ const DetallePatron: React.FC<DetallePatronProps> = ({ route, navigation }) => {
         </Text>
       );
     });
-    return partes;
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Detalles del Patrón Funcional</Text>
-      {renderTextoConFormato(descripcion)}
+    <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <View style={styles.contentBox}>
+        <Text style={styles.title}>Detalles del Patrón Funcional</Text>
+        {renderTextoConFormato(descripcion)}
+      </View>
     </ScrollView>
   );
 };
@@ -53,27 +53,34 @@ const DetallePatron: React.FC<DetallePatronProps> = ({ route, navigation }) => {
 export default DetallePatron;
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#195365',
+  scrollContainer: {
+    backgroundColor: '#fff',
     padding: 20,
     flexGrow: 1,
   },
+  contentBox: {
+    backgroundColor: '#ffffff',
+    borderRadius: 12,
+    padding: 20,
+    borderWidth: 1,
+    borderColor: '#ccc',
+  },
   title: {
-    fontSize: 24,
-    color: '#fff',
+    fontSize: 22,
+    color: '#195365',
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginBottom: 16,
     textAlign: 'center',
   },
   boldText: {
     fontWeight: 'bold',
-    fontSize: 18,
-    color: '#fff',
+    fontSize: 16,
+    color: '#195365',
     marginBottom: 8,
   },
   normalText: {
     fontSize: 16,
-    color: '#fff',
+    color: '#333',
     marginBottom: 6,
   },
 });
