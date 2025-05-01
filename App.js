@@ -19,21 +19,34 @@ const primaryBackgroundColor = 'rgb(39, 51, 65)';
 const buttonActiveColor = 'rgb(5, 77, 159)';
 const buttonDisabledColor = '#5C6F88';
 const primaryTextColor = '#FFFFFF';
-const secondaryTextColor = '#D1D5DB';
 const tabActiveTintColor = '#FFFFFF';
 const tabInactiveTintColor = '#9CA3AF';
 
 const screenWidth = Dimensions.get('window').width;
 const buttonSize = (screenWidth / 2) - 30;
 
-const MenuButton = ({ onPress, title, icon }) => (
-  <TouchableOpacity style={styles.menuButton} onPress={onPress}>
-    <Image source={icon} style={styles.menuIcon} />
+const MenuButton = ({
+  onPress,
+  title,
+  icon,
+  backgroundColor = buttonActiveColor,
+  customIconWrapper = false,
+  disabled = false,
+}) => (
+  <TouchableOpacity
+    style={[
+      styles.menuButton,
+      { backgroundColor, opacity: disabled ? 0.6 : 1 },
+    ]}
+    onPress={onPress}
+    disabled={disabled}
+  >
+    <View style={customIconWrapper ? styles.iconWrapper : null}>
+      <Image source={icon} style={styles.menuIcon} />
+    </View>
     <Text style={styles.menuText}>{title}</Text>
   </TouchableOpacity>
 );
-
-
 
 function InfoStack() {
   return (
@@ -51,6 +64,8 @@ function InfoScreen({ navigation }) {
       <MenuButton
         title="Patrones Funcionales"
         icon={require('./assets/icono_patrones.png')}
+        backgroundColor="#3B5B92"
+        customIconWrapper={true}
         onPress={() => navigation.navigate('PatronesFuncionales')}
       />
     </View>
@@ -70,24 +85,29 @@ function CalculosStack() {
 
 function CalculosScreen({ navigation }) {
   return (
-<View style={styles.container}>
-  <MenuButton
-    title="Pérdidas Insensibles"
-    icon={require('./assets/icono_perdidas.png')}
-    onPress={() => navigation.navigate('PerdidasInsensibles')}
-  />
-  <MenuButton
-    title="Regla de 3 - Dosis"
-    icon={require('./assets/icono_regla.png')}
-    onPress={() => navigation.navigate('ReglaDeTres')}
-  />
-  <MenuButton
-    title="Presión Arterial Media"
-    icon={require('./assets/icono_pam.png')}
-    onPress={() => navigation.navigate('PresionArterialMedia')}
-  />
-</View>
-
+    <View style={styles.container}>
+      <MenuButton
+        title="Pérdidas Insensibles"
+        icon={require('./assets/icono_perdidas.png')}
+        backgroundColor="#5C415D"
+        customIconWrapper={true}
+        onPress={() => navigation.navigate('PerdidasInsensibles')}
+      />
+      <MenuButton
+        title="Regla de 3 - Dosis"
+        icon={require('./assets/icono_regla.png')}
+        backgroundColor="#4E6E81"
+        customIconWrapper={true}
+        onPress={() => navigation.navigate('ReglaDeTres')}
+      />
+      <MenuButton
+        title="Presión Arterial Media"
+        icon={require('./assets/icono_pam.png')}
+        backgroundColor="#356E55"
+        customIconWrapper={true}
+        onPress={() => navigation.navigate('PresionArterialMedia')}
+      />
+    </View>
   );
 }
 
@@ -104,15 +124,21 @@ function HerramientasScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.gridContainer}>
-      <MenuButton
-  title="Contratos Eventuales"
-  icon={require('./assets/icono_contratos.png')}
-  onPress={() => navigation.navigate('ContratosEventuales')}
-/>
-<TouchableOpacity style={[styles.menuButton, { backgroundColor: buttonDisabledColor }]} disabled>
-  <Image source={require('./assets/icono_contratos.png')} style={styles.menuIcon} />
-  <Text style={styles.menuText}>Calendario</Text>
-</TouchableOpacity>
+        <MenuButton
+          title="Contratos Eventuales"
+          icon={require('./assets/icono_contratos.png')}
+          backgroundColor="#49796B"
+          customIconWrapper={true}
+          onPress={() => navigation.navigate('ContratosEventuales')}
+        />
+        <MenuButton
+          title="Calendario"
+          icon={require('./assets/icono_contratos.png')}
+          backgroundColor={buttonDisabledColor}
+          customIconWrapper={true}
+          disabled={true}
+          onPress={() => {}}
+        />
       </View>
     </View>
   );
@@ -130,7 +156,9 @@ export default function App() {
       <Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarIcon: ({ color, size }) => (
-            <Text style={{ color, fontSize: size * 0.6 }}>{route.name.slice(0, 3).toUpperCase()}</Text>
+            <Text style={{ color, fontSize: size * 0.6 }}>
+              {route.name.slice(0, 3).toUpperCase()}
+            </Text>
           ),
           headerShown: false,
           tabBarActiveTintColor: tabActiveTintColor,
@@ -160,11 +188,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     width: '100%',
   },
-
   menuButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: buttonActiveColor,
     borderRadius: 12,
     paddingVertical: 18,
     paddingHorizontal: 20,
@@ -176,16 +202,24 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 3,
   },
-  menuIcon: {
-    width: 40,
-    height: 40,
-    resizeMode: 'contain',
-    marginRight: 16,
-  },
   menuText: {
     color: primaryTextColor,
     fontSize: 18,
     fontWeight: '700',
   },
-  
+  iconWrapper: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 999,
+    padding: 10,
+    marginRight: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 48,
+    height: 48,
+  },
+  menuIcon: {
+    width: 30,
+    height: 30,
+    resizeMode: 'contain',
+  },
 });
