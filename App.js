@@ -4,6 +4,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { View, Text, TouchableOpacity, StyleSheet, Dimensions, Image } from 'react-native';
 
+import ControlLiquidos from './screens/ControlLiquidos';
 import CalculoGoteo from './screens/CalculoGoteo';
 import Calendario from './screens/Calendario';
 import PerdidasInsensibles from './screens/PerdidasInsensibles';
@@ -81,6 +82,8 @@ function CalculosStack() {
       <Stack.Screen name="ReglaDeTres" component={ReglaDeTres} />
       <Stack.Screen name="PresionArterialMedia" component={PresionArterialMedia} />
       <Stack.Screen name="CalculoGoteo" component={CalculoGoteo} />
+      <Stack.Screen name="ControlLiquidos" component={ControlLiquidos} />
+
     </Stack.Navigator>
   );
 }
@@ -116,6 +119,14 @@ function CalculosScreen({ navigation }) {
         customIconWrapper={true}
         onPress={() => navigation.navigate('CalculoGoteo')}
       />
+      <MenuButton
+  title="Control de Líquidos"
+  icon={require('./assets/icono_ControlLiquidos.png')} // Asegúrate de tener este ícono
+  backgroundColor="rgb(80, 85, 176)"
+  customIconWrapper={true}
+  onPress={() => navigation.navigate('ControlLiquidos')}
+/>
+
     </View>
   );
 }
