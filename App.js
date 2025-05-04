@@ -5,6 +5,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { View, Text, TouchableOpacity, StyleSheet, Dimensions, Image } from 'react-native';
 
+import Calendario from './screens/Calendario';
 import PerdidasInsensibles from './screens/PerdidasInsensibles';
 import PatronesFuncionales from './screens/PatronesFuncionales';
 import ReglaDeTres from './screens/ReglaDeTres';
@@ -116,6 +117,7 @@ function HerramientasStack() {
     <Stack.Navigator screenOptions={stackScreenOptions}>
       <Stack.Screen name="HerramientasInicio" component={HerramientasScreen} options={{ title: 'Herramientas' }} />
       <Stack.Screen name="ContratosEventuales" component={ContratosEventuales} />
+      <Stack.Screen name="Calendario" component={Calendario} />
     </Stack.Navigator>
   );
 }
@@ -131,14 +133,14 @@ function HerramientasScreen({ navigation }) {
           customIconWrapper={true}
           onPress={() => navigation.navigate('ContratosEventuales')}
         />
-        <MenuButton
-          title="Calendario"
-          icon={require('./assets/icono_contratos.png')}
-          backgroundColor={buttonDisabledColor}
-          customIconWrapper={true}
-          disabled={true}
-          onPress={() => {}}
-        />
+<MenuButton
+  title="Calendario"
+  icon={require('./assets/icono_contratos.png')} // Usa otro ícono si lo tienes
+  backgroundColor="#7B6D8D"
+  customIconWrapper={true}
+  onPress={() => navigation.navigate('Calendario')}
+/>
+
       </View>
     </View>
   );
