@@ -10,23 +10,43 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   TouchableOpacity,
+  Modal,
 } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
+
+interface TemperaturaOption {
+  label: string;
+  value: number;
+}
 
 const PerdidasInsensibles = () => {
   const [peso, setPeso] = useState('');
   const [horas, setHoras] = useState('');
-  const [valorTemperatura, setValorTemperatura] = useState(0.5);
+  const [valorTemperatura, setValorTemperatura] = useState<number | null>(0.5);
+  const [temperaturaLabel, setTemperaturaLabel] = useState<string>('< 37°C (0.5)');
   const [resultado, setResultado] = useState<number | null>(null);
+  const [modalVisible, setModalVisible] = useState(false); // State for modal visibility
+
+  const temperaturaOptions: TemperaturaOption[] = [
+    { label: '< 37°C (0.5)', value: 0.5 },
+    { label: '37.1°C - 38°C (0.6)', value: 0.6 },
+    { label: '38.1°C - 39°C (0.7)', value: 0.7 },
+    { label: '> 39°C (1.0)', value: 1.0 },
+  ];
 
   const calcular = () => {
     const pesoNum = parseFloat(peso);
     const horasNum = parseFloat(horas);
-    if (!isNaN(pesoNum) && !isNaN(horasNum)) {
+    if (!isNaN(pesoNum) && !isNaN(horasNum) && valorTemperatura !== null) {
       const ml = (pesoNum * valorTemperatura) * horasNum;
       setResultado(ml);
     }
     Keyboard.dismiss();
+  };
+
+  const handleTemperaturaSelect = (option: TemperaturaOption) => {
+    setValorTemperatura(option.value);
+    setTemperaturaLabel(option.label);
+    setModalVisible(false); // Close modal after selection
   };
 
   return (
@@ -58,19 +78,15 @@ const PerdidasInsensibles = () => {
             onChangeText={setHoras}
           />
 
-          <View style={styles.pickerContainer}>
+          {/* Custom Selector (Modal Trigger) */}
+          <View style={styles.selectorContainer}>
             <Text style={styles.pickerLabel}>Temperatura corporal</Text>
-            <Picker
-              selectedValue={valorTemperatura}
-              onValueChange={(itemValue) => setValorTemperatura(itemValue)}
-              dropdownIconColor="#195365"
-              style={styles.picker}
+            <TouchableOpacity
+              style={styles.selector}
+              onPress={() => setModalVisible(true)} // Open modal on press
             >
-              <Picker.Item label="< 37°C (0.5)" value={0.5} />
-              <Picker.Item label="37.1°C - 38°C (0.6)" value={0.6} />
-              <Picker.Item label="38.1°C - 39°C (0.7)" value={0.7} />
-              <Picker.Item label="> 39°C (1.0)" value={1.0} />
-            </Picker>
+              <Text style={styles.selectorText}>{temperaturaLabel}</Text>
+            </TouchableOpacity>
           </View>
 
           <TouchableOpacity style={styles.boton} onPress={calcular}>
@@ -82,13 +98,42 @@ const PerdidasInsensibles = () => {
               <Text style={styles.resultadoTexto}>Resultado: {resultado.toFixed(2)} ml</Text>
             </View>
           )}
+
+          {/* Modal Component */}
+          <Modal
+            visible={modalVisible}
+            transparent={true}
+            animationType="slide"
+            onRequestClose={() => setModalVisible(false)} // Handle back button on Android
+          >
+            <View style={styles.modalOverlay}>
+              <View style={styles.modalContent}>
+                <Text style={styles.modalTitle}>Selecciona la Temperatura</Text>
+                <ScrollView>
+                  {temperaturaOptions.map((option) => (
+                    <TouchableOpacity
+                      key={option.value}
+                      style={styles.modalItem}
+                      onPress={() => handleTemperaturaSelect(option)} // Select option
+                    >
+                      <Text style={styles.modalItemText}>{option.label}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
+                <TouchableOpacity
+                  style={styles.modalCloseButton}
+                  onPress={() => setModalVisible(false)} // Close button
+                >
+                  <Text style={styles.modalCloseText}>Cerrar</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
         </ScrollView>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   );
 };
-
-export default PerdidasInsensibles;
 
 const styles = StyleSheet.create({
   wrapper: {
@@ -123,13 +168,8 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     color: '#000',
   },
-  pickerContainer: {
-    backgroundColor: '#fff',
-    borderRadius: 10,
+  selectorContainer: {
     marginBottom: 20,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 8,
   },
   pickerLabel: {
     fontSize: 14,
@@ -137,9 +177,56 @@ const styles = StyleSheet.create({
     color: '#195365',
     marginBottom: 6,
   },
-  picker: {
-    width: '100%',
-    color: '#000',
+  selector: {
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 12,
+    fontSize: 16,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    justifyContent: 'center',
+  },
+  selectorText: {
+    color: '#888',
+    fontSize: 16,
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    padding: 20,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#195365',
+    marginBottom: 15,
+  },
+  modalItem: {
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  modalItemText: {
+    fontSize: 16,
+    color: '#333',
+  },
+  modalCloseButton: {
+    backgroundColor: '#195365',
+    borderRadius: 10,
+    padding: 15,
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  modalCloseText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
   boton: {
     backgroundColor: '#195365',
@@ -167,3 +254,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
+
+export default PerdidasInsensibles;

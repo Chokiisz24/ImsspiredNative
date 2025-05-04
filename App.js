@@ -1,10 +1,10 @@
-// App.js
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { View, Text, TouchableOpacity, StyleSheet, Dimensions, Image } from 'react-native';
 
+import CalculoGoteo from './screens/CalculoGoteo';
 import Calendario from './screens/Calendario';
 import PerdidasInsensibles from './screens/PerdidasInsensibles';
 import PatronesFuncionales from './screens/PatronesFuncionales';
@@ -80,6 +80,7 @@ function CalculosStack() {
       <Stack.Screen name="PerdidasInsensibles" component={PerdidasInsensibles} />
       <Stack.Screen name="ReglaDeTres" component={ReglaDeTres} />
       <Stack.Screen name="PresionArterialMedia" component={PresionArterialMedia} />
+      <Stack.Screen name="CalculoGoteo" component={CalculoGoteo} />
     </Stack.Navigator>
   );
 }
@@ -102,11 +103,18 @@ function CalculosScreen({ navigation }) {
         onPress={() => navigation.navigate('ReglaDeTres')}
       />
       <MenuButton
-        title="Presión Arterial Media"
+        title="Presión Arterial Media (PAM)"
         icon={require('./assets/icono_pam.png')}
         backgroundColor="#356E55"
         customIconWrapper={true}
         onPress={() => navigation.navigate('PresionArterialMedia')}
+      />
+      <MenuButton
+        title="Cálculo de Goteo"
+        icon={require('./assets/icono-calculogoteo.png')}
+        backgroundColor="rgb(56, 158, 195)"
+        customIconWrapper={true}
+        onPress={() => navigation.navigate('CalculoGoteo')}
       />
     </View>
   );
@@ -129,18 +137,17 @@ function HerramientasScreen({ navigation }) {
         <MenuButton
           title="Contratos Eventuales"
           icon={require('./assets/icono_contratos.png')}
-          backgroundColor="#49796B"
+          backgroundColor="rgb(67, 169, 110)"
           customIconWrapper={true}
           onPress={() => navigation.navigate('ContratosEventuales')}
         />
-<MenuButton
-  title="Calendario"
-  icon={require('./assets/icono_contratos.png')} // Usa otro ícono si lo tienes
-  backgroundColor="#7B6D8D"
-  customIconWrapper={true}
-  onPress={() => navigation.navigate('Calendario')}
-/>
-
+        <MenuButton
+          title="Calendario"
+          icon={require('./assets/icono_calendario.png')}
+          backgroundColor="rgb(216, 150, 74)"
+          customIconWrapper={true}
+          onPress={() => navigation.navigate('Calendario')}
+        />
       </View>
     </View>
   );
@@ -157,18 +164,33 @@ export default function App() {
     <NavigationContainer>
       <Tab.Navigator
         screenOptions={({ route }) => ({
-          tabBarIcon: ({ color, size }) => (
-            <Text style={{ color, fontSize: size * 0.6 }}>
-              {route.name.slice(0, 3).toUpperCase()}
-            </Text>
-          ),
+          tabBarIcon: ({ color, size }) => {
+            let iconSource;
+
+            if (route.name === 'Información') {
+              iconSource = require('./assets/icono_info.png');
+            } else if (route.name === 'Cálculos') {
+              iconSource = require('./assets/icono_calculos.png');
+            } else if (route.name === 'Herramientas') {
+              iconSource = require('./assets/icono_herramientas.png');
+            }
+
+            return (
+              <Image
+                source={iconSource}
+                style={{ width: size, height: size, tintColor: color }}
+              />
+            );
+          },
           headerShown: false,
           tabBarActiveTintColor: tabActiveTintColor,
           tabBarInactiveTintColor: tabInactiveTintColor,
           tabBarStyle: { backgroundColor: primaryBackgroundColor },
-          tabBarLabelStyle: { fontWeight: 'bold' },
+          tabBarLabelStyle: { fontSize: 12, fontWeight: 'bold' },
+          tabBarShowLabel: true,
         })}
       >
+
         <Tab.Screen name="Información" component={InfoStack} />
         <Tab.Screen name="Cálculos" component={CalculosStack} />
         <Tab.Screen name="Herramientas" component={HerramientasStack} />
