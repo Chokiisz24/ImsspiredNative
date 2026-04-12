@@ -1,0 +1,2 @@
+npm run ios --Simulator "Iphone 15 pro"
+npx react-native run-android

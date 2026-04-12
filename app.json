@@ -1,4 +1,8 @@
 {
   "name": "ImsspiredNative",
-  "displayName": "ImsspiredNative"
+  "displayName": "ImsspiredNative",
+  "plugins": [
+    "expo-asset",
+    "expo-font"
+  ]
 }

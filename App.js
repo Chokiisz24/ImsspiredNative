@@ -13,6 +13,10 @@ import ReglaDeTres from './screens/ReglaDeTres';
 import PresionArterialMedia from './screens/PresionArterialMedia';
 import ContratosEventuales from './screens/ContratosEventuales';
 import DetallePatron from './screens/DetallePatron';
+import TarjetonDigital from './screens/TarjetonDigital';
+import EscalaGlasgow from './screens/EscalaGlasgow';
+import EscalaUpp from './screens/EscalaUpp';
+import ContratoColectivo from './screens/CCT';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -56,6 +60,10 @@ function InfoStack() {
       <Stack.Screen name="InfoInicio" component={InfoScreen} options={{ title: 'Información' }} />
       <Stack.Screen name="PatronesFuncionales" component={PatronesFuncionales} />
       <Stack.Screen name="DetallePatron" component={DetallePatron} />
+      <Stack.Screen name="TarjetonDigital" component={TarjetonDigital} />
+      <Stack.Screen name="EscalaGlasgow" component={EscalaGlasgow} options={{ title: 'Escala de Glasgow' }} />
+            <Stack.Screen name="EscalaUpp" component={EscalaUpp} options={{ title: 'Escala de UPP' }} />
+
     </Stack.Navigator>
   );
 }
@@ -70,6 +78,27 @@ function InfoScreen({ navigation }) {
         customIconWrapper={true}
         onPress={() => navigation.navigate('PatronesFuncionales')}
       />
+      <MenuButton
+        title="Tarjetón Digital IMSS"
+        icon={require('./assets/icono_contratos.png')} // Asegúrate de tener el ícono
+        backgroundColor="#0567A3"
+        customIconWrapper={true}
+        onPress={() => navigation.navigate('TarjetonDigital')}
+      />
+      <MenuButton
+        title="Escala De Glasgow"
+        icon={require('./assets/icono_contratos.png')} // Asegúrate de tener el ícono
+        backgroundColor="#05a38b"
+        customIconWrapper={true}
+        onPress={() => navigation.navigate('EscalaGlasgow')}
+      />
+            <MenuButton
+        title="Escala UPP"
+        icon={require('./assets/icono_contratos.png')} // Asegúrate de tener el ícono
+        backgroundColor="#c571da"
+        customIconWrapper={true}
+        onPress={() => navigation.navigate('EscalaUpp')}
+      />
     </View>
   );
 }
@@ -83,6 +112,7 @@ function CalculosStack() {
       <Stack.Screen name="PresionArterialMedia" component={PresionArterialMedia} />
       <Stack.Screen name="CalculoGoteo" component={CalculoGoteo} />
       <Stack.Screen name="ControlLiquidos" component={ControlLiquidos} />
+      <Stack.Screen name="EscalaUpp" component={EscalaUpp} />
 
     </Stack.Navigator>
   );
@@ -120,12 +150,12 @@ function CalculosScreen({ navigation }) {
         onPress={() => navigation.navigate('CalculoGoteo')}
       />
       <MenuButton
-  title="Control de Líquidos"
-  icon={require('./assets/icono_ControlLiquidos.png')} // Asegúrate de tener este ícono
-  backgroundColor="rgb(80, 85, 176)"
-  customIconWrapper={true}
-  onPress={() => navigation.navigate('ControlLiquidos')}
-/>
+        title="Control de Líquidos"
+        icon={require('./assets/icono_ControlLiquidos.png')} // Asegúrate de tener este ícono
+        backgroundColor="rgb(80, 85, 176)"
+        customIconWrapper={true}
+        onPress={() => navigation.navigate('ControlLiquidos')}
+      />
 
     </View>
   );
@@ -137,6 +167,8 @@ function HerramientasStack() {
       <Stack.Screen name="HerramientasInicio" component={HerramientasScreen} options={{ title: 'Herramientas' }} />
       <Stack.Screen name="ContratosEventuales" component={ContratosEventuales} />
       <Stack.Screen name="Calendario" component={Calendario} />
+      <Stack.Screen name="CCT" component={ContratoColectivo} options={{ title: 'Contrato Colectivo 25-27' }} 
+/>
     </Stack.Navigator>
   );
 }
@@ -158,6 +190,13 @@ function HerramientasScreen({ navigation }) {
           backgroundColor="rgb(216, 150, 74)"
           customIconWrapper={true}
           onPress={() => navigation.navigate('Calendario')}
+        />
+        <MenuButton
+          title="Contrato Colectivo (CCT)"
+          icon={require('./assets/icono_calendario.png')}
+          backgroundColor="#E11D48" // Un rojo llamativo
+          customIconWrapper={true}
+          onPress={() => navigation.navigate('CCT')}
         />
       </View>
     </View>

@@ -1,269 +1,206 @@
 import React from 'react';
 import { NavigationProp } from '@react-navigation/native';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Platform } from 'react-native';
+
 type PatronesFuncionalesProps = {
-    navigation: NavigationProp<any>;
-  };
-  
+  navigation: NavigationProp<any>;
+};
+
+// --- PALETA DE COLORES (Consistente con EscalaUpp y Glasgow) ---
+const COLORS = {
+  primary: '#195365',       
+  secondary: '#2a7a91',     
+  background: '#f0f4f7',    
+  white: '#ffffff',
+  textPrimary: '#195365',
+  textSecondary: '#5a7d87', 
+  accent: '#e8f4f8',       
+  border: '#d1e0e4',        
+  shadow: '#000',
+};
+
 const patrones = [
   {
     nombre: 'Percepción y Manejo de la Salud',
-    descripcion: `
-Qué valora: 
-- Cómo percibe el individuo la salud y el bienestar.
-- Cómo maneja todo lo relacionado con su salud, respecto a su mantenimiento o recuperación.
-- La adherencia a las prácteicas terapéuticas.
-- Incluye prácticas preventivas (hábitos higiénicos, vacunaciones…).
-      
-Cómo se valora: 
-- Hábitos higiénicos: personales, vivienda, vestido.
-- Vacunas.
-- Alergias.
-- Percepción de su salud.
-- Conductas saludables: interés y conocimiento.
-- Existencia o no de alteraciones de salud (tipo de alteración, cuidados, conocimiento y disposición).
-- Existencia o no de hábitos tóxicos.
-- Accidentes laborales, tráfico y domésticos.
-- Ingresos hospitalarios.
-    `
+    descripcion: `Qué valora:\n- Cómo percibe el individuo la salud y el bienestar.\n- Cómo maneja su salud y adherencia terapéutica.\n- Prácticas preventivas.\n\nCómo se valora:\nHábitos higiénicos, vacunas, alergias, percepción de salud, hábitos tóxicos e ingresos previos.`
   },
   {
-    nombre: 'Nutricional-metabólico',
-    descripcion: `
-Qué valora:
-- Describe el consumo de alimentos y líquidos en relación con sus necesidades metabólicas.
-- Horarios de comida, preferencias y suplementos.
-- Problemas en su ingesta.
-- Altura, peso y temperatura.
-- Condiciones de piel, mucosas y membranas.
-
-Cómo se valora: 
-- Valoración del IMC.
-- Recoge el número de comidas, el lugar, el horario, dietas específicas… así como los líquidos recomendados para tomar en el día.
-- Se deben hacer preguntas sobre el tipo de alimentos que toma por grupos: frutas, verduras, carnes, pescados, legumbres y lácteos.
-- Alteraciones bucales (caries, úlceras, etc.).
-- Dificultades para masticar, tragar.
-- Problemas digestivos (náuseas, vómitos, pirosis).
-- Suplementos alimenticios y vitaminas.
-- Alteraciones de la piel (fragilidad de uñas, falta de hidratación, prurito, edemas, etc.).
-    `
+    nombre: 'Nutricional-Metabólico',
+    descripcion: `Qué valora:\n- Consumo de alimentos y líquidos.\n- Horarios, preferencias y suplementos.\n- Piel, mucosas y termorregulación.\n\nCómo se valora:\nIMC, tipo de alimentos, estado de la dentición, hidratación y alteraciones cutáneas.`
   },
   {
     nombre: 'Eliminación',
-    descripcion: `
-Qué valora:
-- Describe las funciones excretoras intestinal, urinaria y de la piel.
-
-Cómo se valora:
-- Intestinal: Consistencia, regularidad, dolor al defecar, sangre en heces, uso de laxantes, presencia de ostomías, incontinencia.
-- Urinaria: Micciones/día, características de la orina, problemas de micción, sistemas de ayuda (absorbentes, colectores, sondas, urostomías), incontinencias.
-- Cutánea: Sudoración copiosa.
-    `
+    descripcion: `Qué valora:\n- Funciones excretoras (intestinal, urinaria y piel).\n\nCómo se valora:\nConsistencia y regularidad de heces, características de la orina, sudoración y uso de dispositivos de ayuda.`
   },
   {
     nombre: 'Actividad / Ejercicio',
-    descripcion: `
-Qué valora:
-- El patrón de ejercicio.
-- La actividad.
-- Tiempo libre y recreo.
-- Los requerimientos de consumo de energía de las actividades de la vida diaria (higiene, compra, comer, mantenimiento del hogar, etc.).
-- La capacidad funcional.
-- El tipo, cantidad y calidad del ejercicio.
-- Las actividades de tiempo libre.
-
-Cómo se valora:
-- Valoración del estado cardiovascular: Frecuencia cardiaca o PA anormales en respuesta a la actividad, cambios ECG que reflejen isquemia o arritmia.
-- Valoración del estado respiratorio: Antecedentes de enfermedades respiratorias, ambiente laboral, disnea, molestias de esfuerzo, tos nocturna, etc.
-- Tolerancia a la actividad: Fundamentalmente en pacientes cardiacos y respiratorios.
-- Valoración de la movilidad: Debilidad generalizada, cansancio, grado de movilidad en articulaciones, fuerza, tono muscular.
-- Actividades cotidianas: Actividades que realiza, encamamiento, mantenimiento del hogar, capacidad funcional.
-- Estilo de vida: Sedentario, activo.
-- Ocio y actividades recreativas: Tipo de actividades y tiempo que se le dedica.
-    `
+    descripcion: `Qué valora:\n- Patrón de ejercicio y actividad diaria.\n- Capacidad funcional y ocio.\n\nCómo se valora:\nEstado cardiovascular y respiratorio, movilidad articular, fuerza muscular y estilo de vida.`
   },
   {
     nombre: 'Sueño-Descanso',
-    descripcion: `
-Qué valora:
-- Describe la capacidad de la persona para conseguir dormir, descansar o relajarse a lo largo de las 24 horas del día.
-- La percepción de cantidad y calidad del sueño – descanso.
-- La percepción del nivel de energía.
-- Las ayudas para dormir (medicamentos, rutinas, etc.).
-
-Cómo se valora:
-- El espacio físico (ventilación, temperatura agradable y libre de ruidos).
-- El tiempo dedicado al sueño u otros descansos diurnos.
-- Recursos físicos o materiales favorecedores del descanso (mobiliario).
-- Exigencias laborales (turnos, viajes).
-- Hábitos socio-culturales (hora de acostarse o levantarse, siestas, descansos).
-- Problemas de salud física que provoquen dolor o malestar.
-- Problemas de salud psicológica que afecten al estado de ánimo (ansiedad, depresión).
-- Tratamientos farmacológicos que puedan influir en el sueño (broncodilatadores, esteroides, betabloqueantes).
-- Consumo de sustancias estimulantes (cafeína, nicotina, alcohol).
-- Presencia de ronquidos o apneas del sueño.
-    `
+    descripcion: `Qué valora:\n- Capacidad para dormir, descansar o relajarse.\n- Calidad percibida del sueño.\n\nCómo se valora:\nHoras de sueño, ayudas farmacológicas, entorno físico (ruido/luz) y presencia de apneas o ronquidos.`
   },
   {
     nombre: 'Cognitivo-Perceptivo',
-    descripcion: `
-Qué valora:
-- Patrones sensorio-perceptuales y cognitivos.
-- Nivel de conciencia.
-- Conciencia de la realidad.
-- Adecuación de los órganos de los sentidos.
-- Compensación o prótesis.
-- Percepción del dolor y tratamiento.
-- Lenguaje.
-- Ayudas para la comunicación.
-- Memoria.
-- Juicio, comprensión de ideas.
-- Toma de decisiones.
-
-Cómo se valora:
-- Nivel de consciencia y orientación.
-- Nivel de instrucción (si puede leer y escribir).
-- Alteraciones cognitivas (problemas para expresar ideas, memoria, decisiones, lenguaje, concentración).
-- Alteraciones perceptivas (visión, audición, olfato, gusto, sensibilidad táctil).
-- Información sobre el dolor: tipo, localización, intensidad y control.
-- Alteraciones de la conducta: irritabilidad, intranquilidad o agitación.
-    `
+    descripcion: `Qué valora:\n- Nivel de conciencia y sentidos.\n- Memoria, lenguaje y toma de decisiones.\n- Percepción del dolor.\n\nCómo se valora:\nOrientación, capacidad de lectura, alteraciones sensoriales y escala de dolor.`
   },
   {
     nombre: 'Autopercepción - Autoconcepto',
-    descripcion: `
-Qué valora:
-- Autoconcepto y percepciones de uno mismo.
-- Actitudes acerca de uno mismo.
-- Percepción de las capacidades cognitivas, afectivas o físicas.
-- Imagen corporal, social, identidad.
-- Sentido general de valía.
-- Patrón emocional.
-- Patrón de postura corporal y movimiento.
-- Contacto visual, patrones de voz y conversación.
-
-Cómo se valora:
-- Problemas consigo mismo.
-- Imagen corporal.
-- Cambios recientes.
-- Postura, patrón de voz, rasgos personales, contacto visual.
-- Si se siente querido, cambios frecuentes de estado de ánimo, asertividad/pasividad, nerviosismo/relajación.
-    `
+    descripcion: `Qué valora:\n- Actitudes hacia uno mismo.\n- Imagen corporal e identidad.\n- Patrón emocional.\n\nCómo se valora:\nProblemas de autoestima, cambios recientes en la imagen y contacto visual durante la entrevista.`
   },
   {
     nombre: 'Rol - Relaciones',
-    descripcion: `
-Qué valora:
-- El patrón de compromisos de rol y relaciones.
-- La percepción de los roles más importantes.
-- Responsabilidades en su situación actual.
-- Satisfacción o alteraciones en familia, trabajo, relaciones sociales.
-
-Cómo se valora:
-- Familia: Con quién vive, estructura familiar, rol en la familia.
-- Grupo social: Si tiene amigos cercanos, si pertenece a algún grupo social.
-- Trabajo o escuela: Satisfacción laboral o escolar, entorno seguro.
-- Pérdidas, cambios, fracasos, conflictos, aislamiento social, violencia.
-    `
+    descripcion: `Qué valora:\n- Compromisos de rol y relaciones sociales.\n- Satisfacción familiar y laboral.\n\nCómo se valora:\nEstructura familiar, apoyo social, entorno laboral y posibles conflictos o aislamiento.`
   },
   {
     nombre: 'Sexualidad y Reproducción',
-    descripcion: `
-Qué valora:
-- Los patrones de satisfacción o insatisfacción de la sexualidad.
-- Alteraciones en la sexualidad o en las relaciones sexuales.
-- Seguridad en las relaciones sexuales.
-- Patrón reproductivo (menstruación, menopausia, anticonceptivos, embarazos, abortos).
-
-Cómo se valora:
-- Menarquía y todo lo relacionado con ciclo menstrual.
-- Menopausia y síntomas relacionados.
-- Métodos anticonceptivos.
-- Embarazos, abortos, problemas reproductivos.
-- Problemas en relaciones sexuales.
-    `
+    descripcion: `Qué valora:\n- Satisfacción o alteraciones en la sexualidad.\n- Patrón reproductivo.\n\nCómo se valora:\nCiclo menstrual, métodos anticonceptivos, embarazos y problemas en relaciones sexuales.`
   },
   {
-    nombre: 'Adaptación - Tolerancia al estrés',
-    descripcion: `
-Qué valora:
-- Las formas o estrategias de afrontamiento general del individuo.
-- Las respuestas habituales ante situaciones estresantes y control del estrés.
-- La capacidad de adaptación a los cambios.
-- El soporte individual y familiar.
-
-Cómo se valora:
-- Descripción de situaciones estresantes y evaluación de la adaptación.
-- Cambios importantes en los últimos dos años.
-- Uso de medicamentos, drogas o alcohol ante situaciones estresantes.
-- Existencia de alguien cercano a quien contar los problemas.
-    `
+    nombre: 'Adaptación - Tolerancia al Estrés',
+    descripcion: `Qué valora:\n- Estrategias de afrontamiento.\n- Respuesta ante situaciones estresantes.\n\nCómo se valora:\nCambios importantes en los últimos años, red de apoyo cercana y uso de sustancias para el control del estrés.`
   },
   {
     nombre: 'Valores y Creencias',
-    descripcion: `
-Qué valora:
-- Los patrones de valores y creencias que guían las elecciones o decisiones.
-- Lo que se considera correcto, apropiado, bien y mal, bueno y malo.
-- Percepciones de conflicto en valores, creencias o expectativas en relación con la salud.
-- Decisiones sobre tratamientos, prioridades de salud, vida o muerte.
-
-Cómo se valora:
-- Si tiene planes de futuro importantes, si está satisfecho con su vida.
-- Pertenencia a alguna religión, si le causa algún problema o le ayuda.
-- Preocupaciones relacionadas con la vida, la muerte, el dolor o enfermedad.
-    `
+    descripcion: `Qué valora:\n- Patrones que guían las decisiones del individuo.\n- Conflicto entre creencias y salud.\n\nCómo se valora:\nReligión, planes de futuro, y percepciones sobre la vida, la muerte y la enfermedad.`
   }
 ];
+
 const PatronesFuncionales: React.FC<PatronesFuncionalesProps> = ({ navigation }) => {
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>11 Patrones Funcionales</Text>
-      {patrones.map((patron, index) => (
-        <TouchableOpacity
-          key={index}
-          style={styles.card}
-          onPress={() =>
-            navigation.navigate('DetallePatron', {
-              descripcion: patron.descripcion,
-              nombre: patron.nombre,
-            })
-          }
-        >
-          <Text style={styles.cardText}>{`${index + 1}. ${patron.nombre}`}</Text>
-        </TouchableOpacity>
-      ))}
-    </ScrollView>
+    <View style={styles.mainContainer}>
+      <ScrollView 
+        contentContainerStyle={styles.scrollContainer}
+        showsVerticalScrollIndicator={false}
+      >
+        <Text style={styles.sectionSubtitle}>Patrones de Marjory Gordon</Text>
+        
+        {patrones.map((patron, index) => (
+          <TouchableOpacity
+            key={index}
+            style={styles.card}
+            activeOpacity={0.7}
+            onPress={() =>
+              navigation.navigate('DetallePatron', {
+                descripcion: patron.descripcion,
+                nombre: patron.nombre,
+              })
+            }
+          >
+            <View style={styles.cardContent}>
+              {/* Círculo numerado */}
+              <View style={styles.circleNumber}>
+                <Text style={styles.circleText}>{index + 1}</Text>
+              </View>
+              
+              <View style={styles.textContainer}>
+                <Text style={styles.cardTitle}>{patron.nombre}</Text>
+                <Text style={styles.cardSubTitle}>Toca para ver valoración</Text>
+              </View>
+
+              {/* Icono de flecha */}
+              <Text style={styles.arrow}>›</Text>
+            </View>
+          </TouchableOpacity>
+        ))}
+        
+        <View style={styles.footerInfo}>
+          <Text style={styles.footerText}>
+            Basado en el modelo de Valoración de Enfermería
+          </Text>
+        </View>
+        <View style={{ height: 40 }} />
+      </ScrollView>
+    </View>
   );
 };
 
 export default PatronesFuncionales;
 
 const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    backgroundColor: '#fff',
-    padding: 20,
+  mainContainer: {
+    flex: 1,
+    backgroundColor: COLORS.background,
   },
-  title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#195365',
-    marginBottom: 20,
-    textAlign: 'center',
+  scrollContainer: {
+    padding: 20,
+    paddingTop: 15,
+  },
+  sectionSubtitle: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: COLORS.secondary,
+    textTransform: 'uppercase',
+    marginBottom: 15,
+    letterSpacing: 1.2,
+    paddingLeft: 5,
   },
   card: {
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    padding: 15,
-    borderWidth: 1,
-    borderColor: '#195365',
-    marginBottom: 15,
+    backgroundColor: COLORS.white,
+    borderRadius: 15,
+    padding: 14,
+    marginBottom: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    ...Platform.select({
+      ios: {
+        shadowColor: COLORS.shadow,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 4,
+      },
+      android: { elevation: 2 },
+    }),
   },
-  cardText: {
-    fontSize: 16,
-    color: '#195365',
-    textAlign: 'center',
+  cardContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  circleNumber: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: COLORS.accent,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 15,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  circleText: {
+    color: COLORS.primary,
+    fontWeight: '700',
+    fontSize: 15,
+  },
+  textContainer: {
+    flex: 1,
+  },
+  cardTitle: {
+    fontSize: 15,
     fontWeight: '600',
+    color: COLORS.textPrimary,
+  },
+  cardSubTitle: {
+    fontSize: 12,
+    color: COLORS.textSecondary,
+    marginTop: 2,
+  },
+  arrow: {
+    fontSize: 22,
+    color: COLORS.border,
+    fontWeight: '300',
+    marginLeft: 5,
+  },
+  footerInfo: {
+    marginTop: 10,
+    padding: 15,
+    alignItems: 'center',
+  },
+  footerText: {
+    color: COLORS.textSecondary,
+    fontSize: 12,
+    fontStyle: 'italic',
+    textAlign: 'center',
   },
 });
